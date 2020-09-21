@@ -3,16 +3,14 @@ import java.util.ArrayList;
 
 public class SacADos {
 	private float poids_maximal;
-	private ArrayList<String[]> sac;
+	private ArrayList<Item> sac;
 	
 	private static final String GLOUT = "gloutonne";
 	private static final String DYNA = "dynamique";
 	private static final String PSE = "pse";
 	
-	
-	
 	public SacADos() {
-		this.sac = new ArrayList<String[]>();
+		this.sac = new ArrayList<Item>();
 	}
 	
 	public SacADos(String chemin, float pMax) {
@@ -25,7 +23,7 @@ public class SacADos {
 			String[] item;
 			while ((ligne = buff.readLine()) != null) {
 				item = ligne.split(" ; ");
-				this.sac.add(item);
+				this.sac.add(new Item(item));
 			}
 			buff.close();
 			lecture.close();
@@ -39,8 +37,8 @@ public class SacADos {
 	public String toString() {
 		String res = "";
 		res += "Sac: pMax=" + this.poids_maximal + "\n";
-		for (String[] item : this.sac) {
-			res += item[0] + " : poids= " + item[1] + ", prix= " + item[2] + "\n";
+		for (Item item : this.sac) {
+			res += item.getNom() + " : poids= " + item.getPoids() + ", prix= " + item.getPrix() + ", ratio=" + item.getRatio() + "\n";
 		}
 		return res;
 	}
@@ -76,8 +74,31 @@ public class SacADos {
 		// TODO
 	}
 	
+	private void trier() {
+		double minv = 1;
+		int mini = 0;
+		int length = this.sac.size()-1;
+		
+		for(int j=0; j < this.sac.size(); j++){
+			mini = length;
+			minv = 1;
+			for (int i=0; i <= length; i++) {
+				if (this.sac.get(i).inferiorTo(minv)) {
+					minv = this.sac.get(i).getRatio();
+					mini = i;
+				}
+			}
+			Item tmp = this.sac.get(length);
+			this.sac.set(length, this.sac.get(mini));
+			this.sac.set(mini, tmp);
+			length--;
+		}
+	}
+	
 	public static void main(String[] args) {
 		SacADos s = new SacADos("items.txt", 30);
+		System.out.println(s);
+		s.trier();
 		System.out.println(s);
 	}
 }

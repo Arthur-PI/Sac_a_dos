@@ -29,7 +29,7 @@ public class Item {
 	}
 	
 	public double getRatio() {
-		return this.poids / this.prix;
+		return this.prix / this.poids;
 	}
 	
 	public boolean superiorTo(Item item2) {
@@ -47,14 +47,4 @@ public class Item {
 	public boolean inferiorTo(double ratio) {
 		return this.getRatio() < ratio;
 	}
-	
-	public int compareTo(Item item2) {
-		double a = this.getRatio();
-		double b = item2.getRatio();
-		if (a < b) return -1;
-		else if (a > b) return 1;
-		return 0;
-	}
-	
-
 }

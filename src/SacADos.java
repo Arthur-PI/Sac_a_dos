@@ -61,8 +61,23 @@ public class SacADos {
 	}
 	
 	public void res_gloutonne() {
-		System.out.println("Gloutonne");
-		// TODO
+		System.out.println("Methode Gloutonne:\n");
+		this.trier();
+		System.out.println(this);
+		int poids = 0;
+		int prix = 0;
+		Item tmp;
+		
+		for (int i=0; i<this.sac.size(); i++) {
+			tmp = this.sac.get(i);
+			if (poids + tmp.getPoids() > this.poids_maximal) this.sac.remove(i--);
+			else {
+				poids += tmp.getPoids();
+				prix += tmp.getPrix();
+			}
+		}
+		System.out.println(this);
+		System.out.println("Poids total: " + poids + "\nPrix totale: " + prix);
 	}
 	
 	public void res_dynamique() {
@@ -75,13 +90,14 @@ public class SacADos {
 	}
 	
 	private void trier() {
-		double minv = 1;
-		int mini = 0;
+		// Methode de Trie par selection ou je fais remonter les elements les plus petit a la fin
+		double minv;
+		int mini;
 		int length = this.sac.size()-1;
 		
 		for(int j=0; j < this.sac.size(); j++){
 			mini = length;
-			minv = 1;
+			minv = 1000000;
 			for (int i=0; i <= length; i++) {
 				if (this.sac.get(i).inferiorTo(minv)) {
 					minv = this.sac.get(i).getRatio();
@@ -96,9 +112,9 @@ public class SacADos {
 	}
 	
 	public static void main(String[] args) {
-		SacADos s = new SacADos("items.txt", 30);
+		SacADos s = new SacADos("items.txt", 5);
 		System.out.println(s);
-		s.trier();
-		System.out.println(s);
+		s.res_gloutonne();
+		
 	}
 }

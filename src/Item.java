@@ -2,9 +2,9 @@
 public class Item {
 	private String nom;
 	private double prix;
-	private double poids;
+	private int poids;
 	
-	public Item(String nom, double poids, double prix) {
+	public Item(String nom, int poids, double prix) {
 		this.nom = nom;
 		this.prix = prix;
 		this.poids = poids;
@@ -12,7 +12,7 @@ public class Item {
 	
 	public Item(String item[]) {
 		this.nom = item[0];
-		this.poids = Double.parseDouble(item[1]);
+		this.poids = Integer.parseInt(item[1]);
 		this.prix = Double.parseDouble(item[2]);
 	}
 	
@@ -24,7 +24,7 @@ public class Item {
 		return this.prix;
 	}
 	
-	public double getPoids() {
+	public int getPoids() {
 		return this.poids;
 	}
 	

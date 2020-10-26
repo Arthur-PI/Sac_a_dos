@@ -1,11 +1,12 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SacADos {
-	private int poids_maximal;
+	private int POIDS_MAX;
+	private int poids;
+	private double prix;
 	private ArrayList<Item> sac;
-	private	int[] dansSac;
+	private	int[] dansSac; // 1 si dedans 0 sinon
 	
 	private static final String GLOUT = "gloutonne";
 	private static final String DYNA = "dynamique";
@@ -17,7 +18,7 @@ public class SacADos {
 	
 	public SacADos(String chemin, int pMax) {
 		this();
-		this.poids_maximal = pMax;
+		this.POIDS_MAX = pMax;
 		try {
 			InputStreamReader lecture = new InputStreamReader(new FileInputStream(chemin));
 			BufferedReader buff = new BufferedReader(lecture);
@@ -40,7 +41,7 @@ public class SacADos {
 	public String toString() {
 		String res = "";
 		Item item;
-		res += "Sac: pMax=" + this.poids_maximal + "\n";
+		res += "Sac: pMax=" + this.POIDS_MAX + "\n";
 		for (int i=0; i<this.dansSac.length; i++) {
 			if (this.dansSac[i] == 1) {
 				item = this.sac.get(i);
@@ -77,7 +78,7 @@ public class SacADos {
 		
 		for (int i=0; i<this.sac.size(); i++) {
 			tmp = this.sac.get(i);
-			if (poids + tmp.getPoids() > this.poids_maximal) this.sac.remove(i--);
+			if (poids + tmp.getPoids() > this.POIDS_MAX) this.sac.remove(i--);
 			else {
 				poids += tmp.getPoids();
 				prix += tmp.getPrix();
@@ -91,12 +92,12 @@ public class SacADos {
 		// Cette methode ne marche qu'avec des valeur entire de poids
 		
 		System.out.println("Dynamique");
-		double[][] v = new double[this.sac.size()][this.poids_maximal+1];
+		double[][] v = new double[this.sac.size()][this.POIDS_MAX+1];
 		Item curItem = this.sac.get(0);
 		int poids = curItem.getPoids();
 		double value = curItem.getPrix();
 		// Boucle pour initialiser la premiere ligne de mon tableau
-		for(int i=0; i<=poids_maximal; i++) v[0][i] = i<poids ? 0 : value;
+		for(int i=0; i <= POIDS_MAX; i++) v[0][i] = i<poids ? 0 : value;
 		int j=0;
 		
 		// Boucle pour remplir toute les autre cases de mon tableau
@@ -105,31 +106,28 @@ public class SacADos {
 			curItem = this.sac.get(i);
 			poids = curItem.getPoids();
 			value = curItem.getPrix();
-			// 
-			while (j<=this.poids_maximal && j < poids) v[i][j] = v[i-1][j++];
-			for (j=j; j<=this.poids_maximal; j++) v[i][j] = max(v[i-1][j], v[i-1][j-poids] + value);
+			while (j <= this.POIDS_MAX && j < poids) v[i][j] = v[i-1][j++];
+			for (j=j; j <= this.POIDS_MAX; j++) v[i][j] = max(v[i-1][j], v[i-1][j-poids] + value);
 		}
 		
 		
 		// Boucle pour recuperer les Items a mettre dans le sac en remontant dans le tableau
-		int poidsTotale = 0;
+		this.poids = 0;
 		int i = this.sac.size()-1;
-		j = this.poids_maximal;
-		double valeurTotale = v[i][j];
+		j = this.POIDS_MAX;
+		this.prix = v[i][j];
 		while (i > 0) {
 			if (v[i][j] == v[i-1][j]) this.dansSac[i] = 0;
 			else {
 				j -= this.sac.get(i).getPoids();
-				poidsTotale += this.sac.get(i).getPoids();
+				this.poids += this.sac.get(i).getPoids();
 			}
 			i--;
 		}
 		if (v[i][j] == 0) this.dansSac[i] = 0;
-		else poidsTotale += this.sac.get(i).getPoids();
+		else this.poids += this.sac.get(i).getPoids();
 		
-		//for(double[] l : v) System.out.println(Arrays.toString(l));
-		System.out.println(this);
-		System.out.println("Valeur Totale: " + valeurTotale + "\nPoidsTotale: " + poidsTotale);
+		//System.out.println("Valeur Totale: " + this.prix + "\nPoidsTotale: " + this.poids);
 	}
 	
 	private static double max(double a, double b) {
@@ -163,9 +161,21 @@ public class SacADos {
 		}
 	}
 	
+	public void printSolution() {
+		String res = "";
+		res += "Poids: " + this.poids + "\n";
+		res += "Prix: " + this.prix + "\n";
+		res += "Objets:";
+		for(int i=0; i<this.sac.size(); i++) {
+			if (this.dansSac[i] == 1) res += " " + this.sac.get(i).getNom() + ",";
+		}
+		System.out.println(res);
+	}
+	
 	public static void main(String[] args) {
-		SacADos s = new SacADos("items_test.txt", 30);
+		SacADos s = new SacADos("itemsEval.txt", 30);
 		System.out.println(s);
 		s.res_dynamique();
+		s.printSolution();
 	}
 }

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class SacADos {
 	private int POIDS_MAX;
@@ -42,7 +43,7 @@ public class SacADos {
 		String res = "";
 		Item item;
 		res += "Sac: pMax=" + this.POIDS_MAX + "\n";
-		for (int i=0; i<this.dansSac.length; i++) {
+		for (int i=0; i < this.sac.size(); i++) {
 			if (this.dansSac[i] == 1) {
 				item = this.sac.get(i);
 				res += item.getNom() + " : poids= " + item.getPoids() + ", prix= " + item.getPrix() + ", ratio=" + item.getRatio() + "\n";
@@ -65,33 +66,30 @@ public class SacADos {
 		default:
 			System.out.println("Choix non valide !");
 		}
-		System.out.println(this);
 	}
 	
 	public void res_gloutonne() {
-		System.out.println("Methode Gloutonne:\n");
+		System.out.println("Solution Gloutonne:");
 		this.trier();
-		System.out.println(this);
-		int poids = 0;
-		int prix = 0;
-		Item tmp;
+		this.poids = 0;
+		this.prix = 0;
+		Item objet;
 		
 		for (int i=0; i<this.sac.size(); i++) {
-			tmp = this.sac.get(i);
-			if (poids + tmp.getPoids() > this.POIDS_MAX) this.sac.remove(i--);
+			objet = this.sac.get(i);
+			if (this.poids + objet.getPoids() > this.POIDS_MAX) this.sac.remove(i--);
 			else {
-				poids += tmp.getPoids();
-				prix += tmp.getPrix();
+				this.poids += objet.getPoids();
+				this.prix += objet.getPrix();
+				this.dansSac[i] = 1;
 			}
 		}
-		System.out.println(this);
-		System.out.println("Poids total: " + poids + "\nPrix totale: " + prix);
+		//System.out.println("Poids total: " + this.poids + "\nPrix totale: " + this.prix);
 	}
 	
 	public void res_dynamique() {
-		// Cette methode ne marche qu'avec des valeur entire de poids
-		
-		System.out.println("Dynamique");
+		// Cette methode ne marche qu'avec des valeur entiere de poids
+		System.out.println("Solution Dynamique");
 		double[][] v = new double[this.sac.size()][this.POIDS_MAX+1];
 		Item curItem = this.sac.get(0);
 		int poids = curItem.getPoids();
@@ -172,10 +170,75 @@ public class SacADos {
 		System.out.println(res);
 	}
 	
-	public static void main(String[] args) {
-		SacADos s = new SacADos("itemsEval.txt", 30);
+	private static void howToUse() {
+		String res = "How to use :\n";
+		res += "1. Run \"java SacADos path/to/itemfile.txt poidsMax resolution\" Gloutonne/Dynamique/PSE\n";
+		res += "2. Just run \"java SacADos\" you'll have a walkthrought";
+		System.out.println(res);
+	}
+	
+	private static boolean validMethode(String methode) {
+		if (methode.equals(GLOUT) || methode.equals(DYNA) || methode.equals(PSE)) {
+			return true;
+		}
+		return false;
+	}
+	
+	private static void walkTrought() {
+		Scanner in= new Scanner(System.in);
+		String file;
+		System.out.println("Donnez le chemin du fichier des items:");
+		System.out.print("> ");
+		file = in.nextLine();
+		while(!(new File(file)).exists()){
+			System.out.println("Erreur: Fichier intouvable !");
+			System.out.print("> ");
+			file = in.nextLine();
+		}
+		
+		System.out.println("Donnez le poids maximal du sac:");
+		System.out.print("> ");
+		int pMax = in.nextInt();
+		in.nextLine();
+		
+		System.out.println("Choisissez la methode de resolution ({GLOUT}/{DYNA}/{PSE):");
+		System.out.print("> ");
+		String methode = in.nextLine().toLowerCase();
+		while (!validMethode(methode)) {
+			System.out.println("Erreur: Methode invalide !");
+			System.out.print("> ");
+			methode = in.nextLine().toLowerCase();
+		}
+		in.close();
+		SacADos s = new SacADos(file, pMax);
 		System.out.println(s);
-		s.res_dynamique();
+		s.resoudre(methode);
 		s.printSolution();
+	}
+	
+	public static void main(String[] args) {
+		if (args.length == 3) {
+			SacADos s = new SacADos(args[0], Integer.parseInt(args[1]));
+			args[2].toLowerCase();
+			if (!validMethode(args[2])) {
+				System.out.println("Erreur: Methode invalide");
+				System.exit(2);
+			}
+			System.out.println(s);
+			s.resoudre(args[2]);
+			s.printSolution();
+		}
+		else if(args.length > 0) {
+			howToUse();
+		}
+		else {
+			walkTrought();
+		}
+		//SacADos s = new SacADos("../itemsEval.txt", 20);
+		//File file = new File("../itemsEval.txt");
+		//System.out.println(file.exists());
+		//System.out.println(s);
+		//s.res_gloutonne();
+		//s.printSolution();
 	}
 }

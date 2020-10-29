@@ -33,6 +33,7 @@ public class SacADos {
 			for(int i=0; i<this.dansSac.length; i++) this.dansSac[i] = 1;
 			buff.close();
 			lecture.close();
+			if (this.sac.size() == 0) System.exit(3);
 		
 		} catch (IOException e) {
 			System.out.println(e.toString());
@@ -70,7 +71,9 @@ public class SacADos {
 	
 	public void res_gloutonne() {
 		System.out.println("Solution Gloutonne:");
-		this.trier();
+		System.out.println(this);
+		Tri.quickSort(this.sac, 0, this.sac.size()-1);
+		System.out.println(this);
 		this.poids = 0;
 		this.prix = 0;
 		Item objet;
@@ -84,7 +87,6 @@ public class SacADos {
 				this.dansSac[i] = 1;
 			}
 		}
-		//System.out.println("Poids total: " + this.poids + "\nPrix totale: " + this.prix);
 	}
 	
 	public void res_dynamique() {
@@ -124,8 +126,6 @@ public class SacADos {
 		}
 		if (v[i][j] == 0) this.dansSac[i] = 0;
 		else this.poids += this.sac.get(i).getPoids();
-		
-		//System.out.println("Valeur Totale: " + this.prix + "\nPoidsTotale: " + this.poids);
 	}
 	
 	private static double max(double a, double b) {
@@ -137,8 +137,8 @@ public class SacADos {
 		// TODO
 	}
 	
+	// Methode de Trie par selection ou je fais remonter les elements les plus petit a la fin
 	private void trier() {
-		// Methode de Trie par selection ou je fais remonter les elements les plus petit a la fin
 		double minv;
 		int mini;
 		int length = this.sac.size()-1;
@@ -161,9 +161,9 @@ public class SacADos {
 	
 	public void printSolution() {
 		String res = "";
-		res += "Poids: " + this.poids + "\n";
-		res += "Prix: " + this.prix + "\n";
-		res += "Objets:";
+		res += "   Poids: " + this.poids + "\n";
+		res += "   Prix: " + this.prix + "\n";
+		res += "   Objets:";
 		for(int i=0; i<this.sac.size(); i++) {
 			if (this.dansSac[i] == 1) res += " " + this.sac.get(i).getNom() + ",";
 		}
@@ -178,9 +178,7 @@ public class SacADos {
 	}
 	
 	private static boolean validMethode(String methode) {
-		if (methode.equals(GLOUT) || methode.equals(DYNA) || methode.equals(PSE)) {
-			return true;
-		}
+		if (methode.equals(GLOUT) || methode.equals(DYNA) || methode.equals(PSE)) return true;
 		return false;
 	}
 	
@@ -201,7 +199,7 @@ public class SacADos {
 		int pMax = in.nextInt();
 		in.nextLine();
 		
-		System.out.println("Choisissez la methode de resolution ({GLOUT}/{DYNA}/{PSE):");
+		System.out.println("Choisissez la methode de resolution (" + GLOUT + "/" + DYNA + "/" + PSE + ") :");
 		System.out.print("> ");
 		String methode = in.nextLine().toLowerCase();
 		while (!validMethode(methode)) {
@@ -211,7 +209,6 @@ public class SacADos {
 		}
 		in.close();
 		SacADos s = new SacADos(file, pMax);
-		System.out.println(s);
 		s.resoudre(methode);
 		s.printSolution();
 	}
@@ -224,7 +221,6 @@ public class SacADos {
 				System.out.println("Erreur: Methode invalide");
 				System.exit(2);
 			}
-			System.out.println(s);
 			s.resoudre(args[2]);
 			s.printSolution();
 		}
@@ -234,11 +230,5 @@ public class SacADos {
 		else {
 			walkTrought();
 		}
-		//SacADos s = new SacADos("../itemsEval.txt", 20);
-		//File file = new File("../itemsEval.txt");
-		//System.out.println(file.exists());
-		//System.out.println(s);
-		//s.res_gloutonne();
-		//s.printSolution();
 	}
 }

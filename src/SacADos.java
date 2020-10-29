@@ -70,10 +70,8 @@ public class SacADos {
 	}
 	
 	public void res_gloutonne() {
-		System.out.println("Solution Gloutonne:");
-		System.out.println(this);
+		System.out.println("\nSolution Gloutonne:");
 		Tri.quickSort(this.sac, 0, this.sac.size()-1);
-		System.out.println(this);
 		this.poids = 0;
 		this.prix = 0;
 		Item objet;
@@ -137,28 +135,7 @@ public class SacADos {
 		// TODO
 	}
 	
-	// Methode de Trie par selection ou je fais remonter les elements les plus petit a la fin
-	private void trier() {
-		double minv;
-		int mini;
-		int length = this.sac.size()-1;
-		
-		for(int j=0; j < this.sac.size(); j++){
-			mini = length;
-			minv = 1000000;
-			for (int i=0; i <= length; i++) {
-				if (this.sac.get(i).inferiorTo(minv)) {
-					minv = this.sac.get(i).getRatio();
-					mini = i;
-				}
-			}
-			Item tmp = this.sac.get(length);
-			this.sac.set(length, this.sac.get(mini));
-			this.sac.set(mini, tmp);
-			length--;
-		}
-	}
-	
+	// Affichage de la solution apres resolution
 	public void printSolution() {
 		String res = "";
 		res += "   Poids: " + this.poids + "\n";
@@ -170,6 +147,7 @@ public class SacADos {
 		System.out.println(res);
 	}
 	
+	// Si les argument passes pour executer le programme ne sont pas valide
 	private static void howToUse() {
 		String res = "How to use :\n";
 		res += "1. Run \"java SacADos path/to/itemfile.txt poidsMax resolution\" Gloutonne/Dynamique/PSE\n";
@@ -177,11 +155,13 @@ public class SacADos {
 		System.out.println(res);
 	}
 	
+	// Verifie si la methode passe en argument existe
 	private static boolean validMethode(String methode) {
 		if (methode.equals(GLOUT) || methode.equals(DYNA) || methode.equals(PSE)) return true;
 		return false;
 	}
 	
+	// Walktrought pour lancer le programme
 	private static void walkTrought() {
 		Scanner in= new Scanner(System.in);
 		String file;
@@ -215,10 +195,15 @@ public class SacADos {
 	
 	public static void main(String[] args) {
 		if (args.length == 3) {
+			if(!(new File(args[0]).exists())) {
+				System.out.println("Erreur: Fichier '" + args[0] + "' introuvable !");
+				System.exit(1);
+			}
 			SacADos s = new SacADos(args[0], Integer.parseInt(args[1]));
 			args[2].toLowerCase();
 			if (!validMethode(args[2])) {
 				System.out.println("Erreur: Methode invalide");
+				howToUse();
 				System.exit(2);
 			}
 			s.resoudre(args[2]);

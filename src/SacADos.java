@@ -132,8 +132,23 @@ public class SacADos {
 		
 	public void res_pse() {
 		System.out.println("PSE");
-		// TODO
-	}
+		
+		Item[] tabItem = new Item[this.sac.size()];
+		Tree tree = new Tree (listeToTAB(this.sac), this.POIDS_MAX, tabItem, 0);
+		tree.chercherSolution();
+		Item[] tabSolution = tree.getTabMeilleureValeur();
+		Item objet;
+		
+		for (int i=0; i<this.sac.size(); ++i){
+			objet = this.sac.get(i);
+			if (tabSolution[i] != null){
+				this.poids += objet.getPoids();
+				this.prix += objet.getPrix();
+				this.dansSac[i] = 1;
+					
+				}
+			}
+		}
 	
 	// Affichage de la solution apres resolution
 	public void printSolution() {
@@ -216,4 +231,13 @@ public class SacADos {
 			walkTrought();
 		}
 	}
-}
+	
+	public Item[] listeToTAB(ArrayList<Item> liste) {
+		Item[] tabItem = new Item[liste.size()];
+				
+		for (int i = 0; i < liste.size(); i++) {
+			tabItem[i] = liste.get(i);
+		}
+		return tabItem;
+		}
+	}

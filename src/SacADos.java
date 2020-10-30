@@ -71,6 +71,8 @@ public class SacADos {
 	
 	public void res_gloutonne() {
 		System.out.println("\nSolution Gloutonne:");
+		
+		long startTime = System.nanoTime();
 		Tri.quickSort(this.sac, 0, this.sac.size()-1);
 		this.poids = 0;
 		this.prix = 0;
@@ -85,11 +87,15 @@ public class SacADos {
 				this.dansSac[i] = 1;
 			}
 		}
+		long stopTime = System.nanoTime();
+		System.out.println(stopTime - startTime);
 	}
 	
 	public void res_dynamique() {
 		// Cette methode ne marche qu'avec des valeur entiere de poids
 		System.out.println("Solution Dynamique");
+		
+		long startTime = System.nanoTime();
 		double[][] v = new double[this.sac.size()][this.POIDS_MAX+1];
 		Item curItem = this.sac.get(0);
 		int poids = curItem.getPoids();
@@ -124,6 +130,9 @@ public class SacADos {
 		}
 		if (v[i][j] == 0) this.dansSac[i] = 0;
 		else this.poids += this.sac.get(i).getPoids();
+		
+		long stopTime = System.nanoTime();
+		System.out.println(stopTime - startTime);
 	}
 	
 	private static double max(double a, double b) {
@@ -133,6 +142,7 @@ public class SacADos {
 	public void res_pse() {
 		System.out.println("PSE");
 		
+		long startTime = System.nanoTime();
 		Item[] tabItem = new Item[this.sac.size()];
 		Tree tree = new Tree (listeToTAB(this.sac), this.POIDS_MAX, tabItem, 0);
 		tree.chercherSolution();
@@ -148,6 +158,8 @@ public class SacADos {
 					
 				}
 			}
+		long stopTime = System.nanoTime();
+		System.out.println(stopTime - startTime);
 		}
 	
 	// Affichage de la solution apres resolution
